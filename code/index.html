@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>URL 단축기</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      input,
+      button {
+        padding: 10px;
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔗 URL 단축기</h1>
+
+    <input type="text" id="urlInput" placeholder="긴 URL을 입력하세요" />
+    <button onclick="shortenUrl()">단축하기</button>
+
+    <div id="result" class="result" style="display: none">
+      <strong>단축 URL:</strong>
+      <a href="#" id="shortUrl" target="_blank"></a>
+    </div>
+
+    <script>
+      async function shortenUrl() {
+        const url = document.getElementById("urlInput").value;
+
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ originalUrl: url }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const shortUrl = data.shortUrl;
+          const resultDiv = document.getElementById("result");
+          const link = document.getElementById("shortUrl");
+
+          link.href = shortUrl;
+          link.textContent = shortUrl;
+          resultDiv.style.display = "block";
+        } else {
+          alert(data.error || "URL 단축 중 오류가 발생했습니다.");
+        }
+      }
+    </script>
+  </body>
+</html>
